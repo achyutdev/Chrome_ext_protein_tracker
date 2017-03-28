@@ -4,7 +4,7 @@ $(function(){
         $('#goal').text(item.goal);
     });
     $('#addAmount').click(function(){
-       chrome.storage.sync.get('total',function(item){
+       chrome.storage.sync.get(['total','goal'],function(item){
            var newTotal =0;
            if(item.total){
                newTotal+=parseInt(item.total);
@@ -16,6 +16,16 @@ $(function(){
            chrome.storage.sync.set({ 'total':newTotal });
            $('#total').text(newTotal);
            $('#amount').val('');
+
+           if(newTotal>=item.goal){
+               var opt = {
+                type:"basic",
+                title:"Goal Match !",
+                message: "Congratulation you reach your goal of "+item.goal + "!",
+                iconUrl:"icon.png"
+            }
+            chrome.notifications.create('goalReached', opt, function(){});
+           }
        });
     });
 });
